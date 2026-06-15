@@ -8,15 +8,16 @@ yy = data.y;   % Response variable
 %% Size of training set
 nn=[13;16;19;22;25;28];  % mtcars
 % nn=[18;21;24;27;30;33];  % UScrime
+G=10000;
 for num=1:length(nn)
-    Riskaic = zeros(2000, 1); 
-    Riskbic = zeros(2000, 1);
-    RiskSAIC = zeros(2000, 1); 
-    RiskSBIC = zeros(2000, 1);
-    RiskMMA = zeros(2000, 1); 
-    RiskJMA = zeros(2000, 1); 
-    RiskRMT = zeros(2000, 1);
-    for g=1:2000
+    Riskaic = zeros(G, 1);
+    Riskbic = zeros(G, 1);
+    RiskSAIC = zeros(G, 1);
+    RiskSBIC = zeros(G, 1);
+    RiskMMA = zeros(G, 1);
+    RiskJMA = zeros(G, 1);
+    RiskRMT = zeros(G, 1);
+    for g=1:G
         %% Divide the training set and the test set
         M=size(DATA,2)+1;
         s=1:M;
@@ -33,8 +34,13 @@ for num=1:length(nn)
         for i = 1 : size(DATA,2)
             mea = mean(Xtrain(:,i));
             st = std(Xtrain(:,i));
-            Xtrain(:,i) = (Xtrain(:,i)-mea)/st;
-            Xtest(:,i) = (Xtest(:,i)-mea)/st;
+            if st > 1e-12
+                Xtrain(:,i) = (Xtrain(:,i)-mea)/st;
+                Xtest(:,i) = (Xtest(:,i)-mea)/st;
+            else
+                Xtrain(:,i) = 0;
+                Xtest(:,i) = 0;
+            end
         end
         ymea = mean(ytrain);
         yst = std(ytrain);
